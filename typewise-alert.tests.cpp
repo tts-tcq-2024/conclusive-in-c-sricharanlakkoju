@@ -8,10 +8,20 @@ std::string captureStdout(void (*func)()) {
     return testing::internal::GetCapturedStdout();
 }
 
+// Helper function to call the function pointer
+template <typename Func>
+std::string captureStdout(Func func) {
+    testing::internal::CaptureStdout();
+    func();
+    return testing::internal::GetCapturedStdout();
+}
+
 // Test for getTemperatureRange function
 TEST(TypeWiseAlertTests, GetTemperatureRange) {
+    TemperatureRange range;
+
     // Test for PASSIVE_COOLING
-    TemperatureRange range = getTemperatureRange(PASSIVE_COOLING);
+    range = getTemperatureRange(PASSIVE_COOLING);
     EXPECT_EQ(range.lowerLimit, 0);
     EXPECT_EQ(range.upperLimit, 35);
 
@@ -26,9 +36,9 @@ TEST(TypeWiseAlertTests, GetTemperatureRange) {
     EXPECT_EQ(range.upperLimit, 40);
 
     // Test for invalid cooling type
-    TemperatureRange invalidRange = getTemperatureRange(static_cast<CoolingType>(999)); // out of bounds
-    EXPECT_EQ(invalidRange.lowerLimit, 0); // Expecting default value
-    EXPECT_EQ(invalidRange.upperLimit, 0); // Expecting default value
+    range = getTemperatureRange(static_cast<CoolingType>(999)); // out of bounds
+    EXPECT_EQ(range.lowerLimit, 0);
+    EXPECT_EQ(range.upperLimit, 0);
 }
 
 // Test for inferBreach function
