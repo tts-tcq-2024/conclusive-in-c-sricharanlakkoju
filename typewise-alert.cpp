@@ -52,14 +52,17 @@ void sendToController(BreachType breachType) {
 }
 void sendToEmail(BreachType breachType) {
     const char* recipient = "a.b@c.com";
-    const std::unordered_map<BreachType, std::string> messages = {
-        {BreachType::TOO_LOW, "Hi, the temperature is too low"},
-        {BreachType::TOO_HIGH, "Hi, the temperature is too high"}
+    const BreachMessage breachMessages[] = {
+        {TOO_LOW, "Hi, the temperature is too low"},
+        {TOO_HIGH, "Hi, the temperature is too high"}
     };
+    const int messageCount = sizeof(breachMessages) / sizeof(breachMessages[0]);
  
-    auto it = messages.find(breachType);
-    if (it != messages.end()) {
-        printf("To: %s\n", recipient);
-        printf("%s\n", it->second.c_str());
+    for (int i = 0; i < messageCount; i++) {
+        if (breachMessages[i].type == breachType) {
+            printf("To: %s\n", recipient);
+            printf("%s\n", breachMessages[i].message);
+            break;
+        }
     }
 }
