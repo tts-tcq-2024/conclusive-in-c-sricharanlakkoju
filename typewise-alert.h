@@ -31,8 +31,8 @@ typedef struct {
 } BatteryCharacter;
 
 typedef struct {
-    double lowerLimit;
-    double upperLimit;
+    int lowerLimit;
+    int upperLimit;
 } TemperatureRange;
 
 void checkAndAlert(
