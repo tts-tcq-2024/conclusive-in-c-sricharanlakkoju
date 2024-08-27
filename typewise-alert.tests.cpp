@@ -16,30 +16,7 @@ std::string captureStdout(Func func) {
     return testing::internal::GetCapturedStdout();
 }
 
-// Test for getTemperatureRange function
-// TEST(TypeWiseAlertTests, GetTemperatureRange) {
-//     TemperatureRange range;
 
-//     // Test for PASSIVE_COOLING
-//     range = getTemperatureRange(PASSIVE_COOLING);
-//     EXPECT_EQ(range.lowerLimit, 0);
-//     EXPECT_EQ(range.upperLimit, 35);
-
-//     // Test for HI_ACTIVE_COOLING
-//     range = getTemperatureRange(HI_ACTIVE_COOLING);
-//     EXPECT_EQ(range.lowerLimit, 0);
-//     EXPECT_EQ(range.upperLimit, 45);
-
-//     // Test for MED_ACTIVE_COOLING
-//     range = getTemperatureRange(MED_ACTIVE_COOLING);
-//     EXPECT_EQ(range.lowerLimit, 0);
-//     EXPECT_EQ(range.upperLimit, 40);
-
-//     // Test for invalid cooling type
-//     range = getTemperatureRange(static_cast<CoolingType>(999)); // out of bounds
-//     EXPECT_EQ(range.lowerLimit, 0);
-//     EXPECT_EQ(range.upperLimit, 0);
-// }
 
 // Test for inferBreach function
 TEST(TypeWiseAlertTests, InferBreach) {
