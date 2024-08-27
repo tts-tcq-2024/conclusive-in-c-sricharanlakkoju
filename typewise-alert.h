@@ -1,3 +1,4 @@
+
 #pragma once
 
 typedef enum {
@@ -13,12 +14,14 @@ typedef enum {
 } BreachType;
 
 typedef struct {
-    BreachType type;
-    const char* message;
-} BreachMessage;
+  int lowerLimit;
+  int upperLimit;
+} TemperatureRange;
 
-BreachType inferBreach(int value, TemperatureRange range);
+BreachType inferBreach(double value, TemperatureRange range);
 BreachType classifyTemperatureBreach(CoolingType coolingType, double temperatureInC);
+TemperatureRange getTemperatureRange(CoolingType coolingType);
+
 
 typedef enum {
   TO_CONTROLLER,
@@ -29,11 +32,6 @@ typedef struct {
   CoolingType coolingType;
   char brand[48];
 } BatteryCharacter;
-
-typedef struct {
-    int lowerLimit;
-    int upperLimit;
-} TemperatureRange;
 
 void checkAndAlert(
   AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC);
