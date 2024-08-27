@@ -1,6 +1,13 @@
 #include <gtest/gtest.h>
 #include "typewise-alert.h"
 
+// Helper function to capture stdout output
+std::string captureStdout(void (*func)()) {
+    testing::internal::CaptureStdout();
+    func();
+    return testing::internal::GetCapturedStdout();
+}
+
 // Tests for inferBreach function
 TEST(TypeWiseAlertTests, InferBreach) {
     TemperatureRange range = {0, 35};
@@ -33,32 +40,32 @@ TEST(TypeWiseAlertTests, ClassifyTemperatureBreach) {
 
 // Tests for sendToEmail function
 TEST(TypeWiseAlertTests, SendToEmail) {
-    testing::internal::CaptureStdout();
-    sendToEmail(TOO_LOW);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "To: a.b@c.com\nHi, the temperature is too low\n");
+    // Test TOO_LOW
+    std::string output = captureStdout([]() { sendToEmail(TOO_LOW); });
+    EXPECT_EQ(output, "To: a.b@c.com\nHi, the temperature is too low\n");
 
-    testing::internal::CaptureStdout();
-    sendToEmail(TOO_HIGH);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "To: a.b@c.com\nHi, the temperature is too high\n");
+    // Test TOO_HIGH
+    output = captureStdout([]() { sendToEmail(TOO_HIGH); });
+    EXPECT_EQ(output, "To: a.b@c.com\nHi, the temperature is too high\n");
 
-    testing::internal::CaptureStdout();
-    sendToEmail(NORMAL);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "");  // No output for NORMAL
+    // Test NORMAL
+    output = captureStdout([]() { sendToEmail(NORMAL); });
+    EXPECT_EQ(output, "");  // No output for NORMAL
 }
 
 // Tests for sendToController function
 TEST(TypeWiseAlertTests, SendToController) {
-    testing::internal::CaptureStdout();
-    sendToController(TOO_LOW);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "feed : 1\n");
+    // Test TOO_LOW
+    std::string output = captureStdout([]() { sendToController(TOO_LOW); });
+    EXPECT_EQ(output, "feed : 1\n");
 
-    testing::internal::CaptureStdout();
-    sendToController(TOO_HIGH);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "feed : 2\n");
+    // Test TOO_HIGH
+    output = captureStdout([]() { sendToController(TOO_HIGH); });
+    EXPECT_EQ(output, "feed : 2\n");
 
-    testing::internal::CaptureStdout();
-    sendToController(NORMAL);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "feed : 0\n");
+    // Test NORMAL
+    output = captureStdout([]() { sendToController(NORMAL); });
+    EXPECT_EQ(output, "feed : 0\n");
 }
 
 // Tests for getTemperatureRange function
@@ -83,33 +90,26 @@ TEST(TypeWiseAlertTests, CheckAndAlert) {
     BatteryCharacter batteryChar = {PASSIVE_COOLING, "BrandX"};
 
     // Test TO_CONTROLLER alerts
-    testing::internal::CaptureStdout();
-    checkAndAlert(TO_CONTROLLER, batteryChar, 36);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "feed : 2\n");
+    std::string output = captureStdout([&]() { checkAndAlert(TO_CONTROLLER, batteryChar, 36); });
+    EXPECT_EQ(output, "feed : 2\n");
 
-    testing::internal::CaptureStdout();
-    checkAndAlert(TO_CONTROLLER, batteryChar, -1);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "feed : 1\n");
+    output = captureStdout([&]() { checkAndAlert(TO_CONTROLLER, batteryChar, -1); });
+    EXPECT_EQ(output, "feed : 1\n");
 
-    testing::internal::CaptureStdout();
-    checkAndAlert(TO_CONTROLLER, batteryChar, 30);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "feed : 0\n");
+    output = captureStdout([&]() { checkAndAlert(TO_CONTROLLER, batteryChar, 30); });
+    EXPECT_EQ(output, "feed : 0\n");
 
     // Test TO_EMAIL alerts
-    testing::internal::CaptureStdout();
-    checkAndAlert(TO_EMAIL, batteryChar, -5);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "To: a.b@c.com\nHi, the temperature is too low\n");
+    output = captureStdout([&]() { checkAndAlert(TO_EMAIL, batteryChar, -5); });
+    EXPECT_EQ(output, "To: a.b@c.com\nHi, the temperature is too low\n");
 
-    testing::internal::CaptureStdout();
-    checkAndAlert(TO_EMAIL, batteryChar, 50);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "To: a.b@c.com\nHi, the temperature is too high\n");
+    output = captureStdout([&]() { checkAndAlert(TO_EMAIL, batteryChar, 50); });
+    EXPECT_EQ(output, "To: a.b@c.com\nHi, the temperature is too high\n");
 
-    testing::internal::CaptureStdout();
-    checkAndAlert(TO_EMAIL, batteryChar, 30);
-    EXPECT_EQ(testing::internal::GetCapturedStdout(), "");  // No output for NORMAL
+    output = captureStdout([&]() { checkAndAlert(TO_EMAIL, batteryChar, 30); });
+    EXPECT_EQ(output, "");  // No output for NORMAL
 
     // Test invalid alert target
-    testing::internal::CaptureStdout();
-    checkAndAlert(static_cast<AlertTarget>(999), batteryChar, 50);
+    output = captureStdout([&]() { checkAndAlert(static_cast<AlertTarget>(999), batteryChar, 50); });
     // No specific output to check, ensures no crash or unexpected behavior
 }
