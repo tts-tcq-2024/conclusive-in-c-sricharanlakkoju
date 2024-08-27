@@ -8,6 +8,14 @@ std::string captureStdout(void (*func)()) {
     return testing::internal::GetCapturedStdout();
 }
 
+// Helper function to call the function pointer
+template <typename Func>
+std::string captureStdout(Func func) {
+    testing::internal::CaptureStdout();
+    func();
+    return testing::internal::GetCapturedStdout();
+}
+
 // Test for getTemperatureRange function
 TEST(TypeWiseAlertTests, GetTemperatureRange) {
     TemperatureRange range;
@@ -121,4 +129,3 @@ TEST(TypeWiseAlertTests, CheckAndAlert) {
     output = captureStdout([&]() { checkAndAlert(static_cast<AlertTarget>(999), batteryChar, 50); });
     EXPECT_EQ(output, "Unknown alert target\n");
 }
-
