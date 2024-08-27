@@ -30,6 +30,11 @@ typedef struct {
   char brand[48];
 } BatteryCharacter;
 
+typedef struct {
+    double lowerLimit;
+    double upperLimit;
+} TemperatureRange;
+
 void checkAndAlert(
   AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC);
 
